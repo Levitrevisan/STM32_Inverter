@@ -1,7 +1,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
 
-#define PWM_TIMERS_PRESCALER 0  
+#define PWM_TIMERS_PRESCALER 0	
 #define PWM_TIMERS_PERIOD 7900
 #define PWM_TIMERS_INIT_PULSE 500
 
@@ -9,6 +9,7 @@
 void delay(unsigned int nCount);
 void InitializeTimer2();
 void InitializeTimer3();
+void InitializeTimer4IT();
 void InitializePWMChannels();
 void InitializePWMGPIO();
 void InitializeLEDGPIO();
@@ -23,6 +24,7 @@ void setup(){
 	InitializeLEDGPIO();
 	InitializeTimer2();
 	InitializeTimer3();
+	InitializeTimer4IT();
 	InitializePWMChannels();
 	InitializePWMGPIO();
 }
@@ -40,14 +42,10 @@ int main(){
 	changeTnegativeDutyCycle(4095);	
 	
 	while(1){
-	
-		GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-		delay(1000);
-		GPIO_SetBits(GPIOC, GPIO_Pin_13);
-		delay(1000);
-	}
 
+	}
 	
+
 return 0;
 }
 
@@ -166,6 +164,44 @@ TIM3->CCR1 = dutyCycle; //0 .. 8191
 
 void changeTnegativeDutyCycle(int dutyCycle){
 TIM3->CCR2 = dutyCycle; //0 .. 8191
+}
+void InitializeTimer4IT(){
+	
+	// Configure NVIC
+	NVIC_InitTypeDef NVIC_InitStructure;
+	// No StructInit call in API
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	// Enable clock for timer 4
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
+	// Create and initialize TimeBase structure
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+	// Configure TimeBase structure
+	TIM_TimeBaseStructure.TIM_Prescaler	= SystemCoreClock/7200 - 1; // considering 8MHz, 1ms
+	TIM_TimeBaseStructure.TIM_Period = 10000; // 0..999
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	
+	// Enable interrupt and starting timer 4
+	TIM_ITConfig(TIM4 , TIM_IT_Update , ENABLE);
+	TIM_Cmd(TIM4 , ENABLE);
+	
+}
+
+void TIM4_IRQHandler(void){
+
+		if(GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13)){
+			GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+		} else {
+			GPIO_SetBits(GPIOC, GPIO_Pin_13);
+		}
+		
+	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
 }
 
 
