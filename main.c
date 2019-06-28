@@ -182,8 +182,8 @@ void InitializeTimer4IT(){
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	// Configure TimeBase structure
-	TIM_TimeBaseStructure.TIM_Prescaler	= SystemCoreClock/7200 - 1; // considering 8MHz, 1ms
-	TIM_TimeBaseStructure.TIM_Period = 10000; // 0..999
+	TIM_TimeBaseStructure.TIM_Prescaler	= 1; // considering 72MHz, 1ms
+	TIM_TimeBaseStructure.TIM_Period = 35999; // each 1ms
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 	
@@ -195,6 +195,7 @@ void InitializeTimer4IT(){
 
 void TIM4_IRQHandler(void){
 
+	//toggle LED on pin PC13
 		if(GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13)){
 			GPIO_ResetBits(GPIOC, GPIO_Pin_13);
 		} else {

@@ -29,27 +29,29 @@ Project File Date:  06/26/2019
 Rebuild target 'Target 1'
 assembling startup_stm32f10x_md.s...
 compiling misc.c...
-compiling stm32f10x_gpio.c...
 compiling system_stm32f10x.c...
-compiling stm32f10x_rcc.c...
 compiling main.c...
-main.c(13): warning:  #1295-D: Deprecated declaration InitializeTimer2 - give arg types
+main.c(10): warning:  #1295-D: Deprecated declaration InitializeTimer2 - give arg types
   void InitializeTimer2();
-main.c(14): warning:  #1295-D: Deprecated declaration InitializeTimer3 - give arg types
+main.c(11): warning:  #1295-D: Deprecated declaration InitializeTimer3 - give arg types
   void InitializeTimer3();
-main.c(15): warning:  #1295-D: Deprecated declaration InitializePWMChannels - give arg types
+main.c(12): warning:  #1295-D: Deprecated declaration InitializeTimer4IT - give arg types
+  void InitializeTimer4IT();
+main.c(13): warning:  #1295-D: Deprecated declaration InitializePWMChannels - give arg types
   void InitializePWMChannels();
-main.c(16): warning:  #1295-D: Deprecated declaration InitializePWMGPIO - give arg types
+main.c(14): warning:  #1295-D: Deprecated declaration InitializePWMGPIO - give arg types
   void InitializePWMGPIO();
-main.c(17): warning:  #1295-D: Deprecated declaration InitializeLEDGPIO - give arg types
+main.c(15): warning:  #1295-D: Deprecated declaration InitializeLEDGPIO - give arg types
   void InitializeLEDGPIO();
-main.c(54): warning:  #111-D: statement is unreachable
+main.c(49): warning:  #111-D: statement is unreachable
   return 0;
-main.c: 6 warnings, 0 errors
+main.c: 7 warnings, 0 errors
+compiling stm32f10x_gpio.c...
+compiling stm32f10x_rcc.c...
 compiling stm32f10x_tim.c...
 linking...
-Program Size: Code=2420 RO-data=252 RW-data=0 ZI-data=1632  
-".\Objects\inverter.axf" - 0 Error(s), 6 Warning(s).
+Program Size: Code=2668 RO-data=252 RW-data=0 ZI-data=1632  
+".\Objects\inverter.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -104,7 +106,7 @@ Package Vendor: Keil
    * Component: Keil::Device:StdPeriph Drivers:TIM:3.5.0
       Source file:   Device\StdPeriph_Driver\src\stm32f10x_tim.c
       Include file:  Device\StdPeriph_Driver\inc\stm32f10x_tim.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>
