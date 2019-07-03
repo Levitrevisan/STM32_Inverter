@@ -2,10 +2,17 @@
 #include "stm32f10x_gpio.h"
 
 #define PWM_TIMERS_PRESCALER 0	
-#define PWM_TIMERS_PERIOD 7900
+#define PWM_TIMERS_PERIOD 3550
 #define PWM_TIMERS_INIT_PULSE 500
 
+// Control Variables
+int senoid_pwm[34] = {0 ,337 ,672 ,1000 ,1319 ,1627 ,1919 ,2194 ,2450 ,2683 ,2892 ,3074 ,3229 ,3355 ,3450 ,3514 ,3546 ,3546 ,3514 ,3450 ,3355 ,3229 ,3074 ,2892 ,2683 ,2450 ,2194 ,1919 ,1627 ,1319 ,1000 ,672 ,337};
 
+char R_is_positive = 1;
+										
+
+// Functions Prototypes										
+int t_senoid = 0;
 void delay(unsigned int nCount);
 void InitializeTimer2();
 void InitializeTimer3();
@@ -13,12 +20,14 @@ void InitializeTimer4IT();
 void InitializePWMChannels();
 void InitializePWMGPIO();
 void InitializeLEDGPIO();
+void toggle_led_PC13();
 void changeRpositiveDutyCycle(int dutyCycle);
 void changeRnegativeDutyCycle(int dutyCycle);
 void changeSpositiveDutyCycle(int dutyCycle);
 void changeSnegativeDutyCycle(int dutyCycle);
 void changeTpositiveDutyCycle(int dutyCycle);
 void changeTnegativeDutyCycle(int dutyCycle);
+void updatePhaseR();
 
 void setup(){
 	InitializeLEDGPIO();
@@ -34,10 +43,10 @@ int main(){
 	
 	setup();
 	
-	changeRpositiveDutyCycle(1024);
-	changeRnegativeDutyCycle(4095);
+	changeRpositiveDutyCycle(200);
+	changeRnegativeDutyCycle(20);
 	changeSpositiveDutyCycle(1024);
-	changeSnegativeDutyCycle(4095);
+	changeSnegativeDutyCycle(3550);
 	changeTpositiveDutyCycle(1024);
 	changeTnegativeDutyCycle(4095);	
 	
@@ -143,11 +152,30 @@ void delay(unsigned int nCount){
 }
 
 void changeRpositiveDutyCycle(int dutyCycle){
-TIM2->CCR1 = dutyCycle; //0 .. 8191
+	
+//	TIM_OCInitTypeDef TIM_OCInitStructure;
+//	TIM_OCStructInit(&TIM_OCInitStructure);
+//	
+//	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+//	TIM_OCInitStructure.TIM_Pulse = dutyCycle;
+//	
+//	TIM_OC1Init(TIM2, &TIM_OCInitStructure); //PA0
+	TIM2->CCR1 = dutyCycle; 
+	
 }
 
 void changeRnegativeDutyCycle(int dutyCycle){
-TIM2->CCR2 = dutyCycle; //0 .. 8191
+	
+//	TIM_OCInitTypeDef TIM_OCInitStructure;
+//	TIM_OCStructInit(&TIM_OCInitStructure);
+//	
+//	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+//	TIM_OCInitStructure.TIM_Pulse = dutyCycle;
+//	
+//	TIM_OC2Init(TIM2, &TIM_OCInitStructure); //PA1
+	TIM2->CCR2 = dutyCycle; 
 }
 
 void changeSpositiveDutyCycle(int dutyCycle){
@@ -183,7 +211,7 @@ void InitializeTimer4IT(){
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	// Configure TimeBase structure
 	TIM_TimeBaseStructure.TIM_Prescaler	= 1; // considering 72MHz, 1ms
-	TIM_TimeBaseStructure.TIM_Period = 35999; // each 1ms
+	TIM_TimeBaseStructure.TIM_Period = 8999; // each 1ms
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 	
@@ -194,15 +222,44 @@ void InitializeTimer4IT(){
 }
 
 void TIM4_IRQHandler(void){
+	//update phases SPWMs
+	updatePhaseR();
+	
+	//"clear interruption flag"
+	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
+	
+}
 
+void updatePhaseR(){
+	if (t_senoid < 33){
+		if (R_is_positive == 1){
+			changeRpositiveDutyCycle(senoid_pwm[t_senoid]);
+		}
+		if (R_is_positive == 0){
+			changeRnegativeDutyCycle(senoid_pwm[t_senoid]);
+		}
+		t_senoid++;
+	} else {
+		if (R_is_positive == 1){
+			R_is_positive = 0;
+			changeRpositiveDutyCycle(0);
+		}
+		else{
+			R_is_positive = 1;
+			changeRnegativeDutyCycle(0);
+		}
+		t_senoid = 0;
+	}
+}
+
+void toggle_led_PC13(){
 	//toggle LED on pin PC13
 		if(GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13)){
 			GPIO_ResetBits(GPIOC, GPIO_Pin_13);
 		} else {
 			GPIO_SetBits(GPIOC, GPIO_Pin_13);
 		}
-		
-	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
+
 }
 
 
