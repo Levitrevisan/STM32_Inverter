@@ -29,33 +29,37 @@ Project File Date:  06/26/2019
 Rebuild target 'Target 1'
 assembling startup_stm32f10x_md.s...
 compiling misc.c...
-compiling system_stm32f10x.c...
 compiling main.c...
-main.c(17): warning:  #1295-D: Deprecated declaration InitializeTimer2 - give arg types
+main.c(25): warning:  #1295-D: Deprecated declaration InitializeTimer2 - give arg types
   void InitializeTimer2();
-main.c(18): warning:  #1295-D: Deprecated declaration InitializeTimer3 - give arg types
+main.c(26): warning:  #1295-D: Deprecated declaration InitializeTimer3 - give arg types
   void InitializeTimer3();
-main.c(19): warning:  #1295-D: Deprecated declaration InitializeTimer4IT - give arg types
+main.c(27): warning:  #1295-D: Deprecated declaration InitializeTimer4IT - give arg types
   void InitializeTimer4IT();
-main.c(20): warning:  #1295-D: Deprecated declaration InitializePWMChannels - give arg types
+main.c(28): warning:  #1295-D: Deprecated declaration InitializePWMChannels - give arg types
   void InitializePWMChannels();
-main.c(21): warning:  #1295-D: Deprecated declaration InitializePWMGPIO - give arg types
+main.c(29): warning:  #1295-D: Deprecated declaration InitializePWMGPIO - give arg types
   void InitializePWMGPIO();
-main.c(22): warning:  #1295-D: Deprecated declaration InitializeLEDGPIO - give arg types
+main.c(30): warning:  #1295-D: Deprecated declaration InitializeLEDGPIO - give arg types
   void InitializeLEDGPIO();
-main.c(23): warning:  #1295-D: Deprecated declaration toggle_led_PC13 - give arg types
+main.c(31): warning:  #1295-D: Deprecated declaration toggle_led_PC13 - give arg types
   void toggle_led_PC13();
-main.c(30): warning:  #1295-D: Deprecated declaration updatePhaseR - give arg types
+main.c(38): warning:  #1295-D: Deprecated declaration updatePhaseR - give arg types
   void updatePhaseR();
-main.c(58): warning:  #111-D: statement is unreachable
+main.c(39): warning:  #1295-D: Deprecated declaration updatePhaseS - give arg types
+  void updatePhaseS();
+main.c(40): warning:  #1295-D: Deprecated declaration updatePhaseT - give arg types
+  void updatePhaseT();
+main.c(68): warning:  #111-D: statement is unreachable
   return 0;
-main.c: 9 warnings, 0 errors
-compiling stm32f10x_gpio.c...
+main.c: 11 warnings, 0 errors
+compiling system_stm32f10x.c...
 compiling stm32f10x_rcc.c...
+compiling stm32f10x_gpio.c...
 compiling stm32f10x_tim.c...
 linking...
-Program Size: Code=2744 RO-data=268 RW-data=144 ZI-data=1632  
-".\Objects\inverter.axf" - 0 Error(s), 9 Warning(s).
+Program Size: Code=2984 RO-data=268 RW-data=152 ZI-data=1632  
+".\Objects\inverter.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -94,14 +98,14 @@ Package Vendor: Keil
 
    * Component: Keil::Device:StdPeriph Drivers:Framework:3.5.1
       Include file:  Device\StdPeriph_Driver\inc\misc.h
-      Source file:   Device\StdPeriph_Driver\src\misc.c
-      Source file:   Device\StdPeriph_Driver\templates\stm32f10x_conf.h
       Include file:  Device\StdPeriph_Driver\templates\stm32f10x_it.h
       Source file:   Device\StdPeriph_Driver\templates\stm32f10x_it.c
+      Source file:   Device\StdPeriph_Driver\src\misc.c
+      Source file:   Device\StdPeriph_Driver\templates\stm32f10x_conf.h
 
    * Component: Keil::Device:StdPeriph Drivers:GPIO:3.5.0
-      Include file:  Device\StdPeriph_Driver\inc\stm32f10x_gpio.h
       Source file:   Device\StdPeriph_Driver\src\stm32f10x_gpio.c
+      Include file:  Device\StdPeriph_Driver\inc\stm32f10x_gpio.h
 
    * Component: Keil::Device:StdPeriph Drivers:RCC:3.5.0
       Include file:  Device\StdPeriph_Driver\inc\stm32f10x_rcc.h
@@ -110,7 +114,7 @@ Package Vendor: Keil
    * Component: Keil::Device:StdPeriph Drivers:TIM:3.5.0
       Include file:  Device\StdPeriph_Driver\inc\stm32f10x_tim.h
       Source file:   Device\StdPeriph_Driver\src\stm32f10x_tim.c
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

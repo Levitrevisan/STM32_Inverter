@@ -5,14 +5,22 @@
 #define PWM_TIMERS_PERIOD 3550
 #define PWM_TIMERS_INIT_PULSE 500
 
-// Control Variables
+// Senoid Pattern generated in MatLab Script on subfolder
+
 int senoid_pwm[34] = {0 ,337 ,672 ,1000 ,1319 ,1627 ,1919 ,2194 ,2450 ,2683 ,2892 ,3074 ,3229 ,3355 ,3450 ,3514 ,3546 ,3546 ,3514 ,3450 ,3355 ,3229 ,3074 ,2892 ,2683 ,2450 ,2194 ,1919 ,1627 ,1319 ,1000 ,672 ,337};
 
+// State Control Variables
+
 char R_is_positive = 1;
-										
+char S_is_positive = 1;
+char T_is_positive = 1;
+
+int t_senoid_R = 0;
+int t_senoid_S = 34/3;
+int t_senoid_T = 34*2/3;
 
 // Functions Prototypes										
-int t_senoid = 0;
+
 void delay(unsigned int nCount);
 void InitializeTimer2();
 void InitializeTimer3();
@@ -28,6 +36,8 @@ void changeSnegativeDutyCycle(int dutyCycle);
 void changeTpositiveDutyCycle(int dutyCycle);
 void changeTnegativeDutyCycle(int dutyCycle);
 void updatePhaseR();
+void updatePhaseS();
+void updatePhaseT();
 
 void setup(){
 	InitializeLEDGPIO();
@@ -224,21 +234,23 @@ void InitializeTimer4IT(){
 void TIM4_IRQHandler(void){
 	//update phases SPWMs
 	updatePhaseR();
-	
+	updatePhaseS();
+	updatePhaseT();
 	//"clear interruption flag"
 	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
+	
 	
 }
 
 void updatePhaseR(){
-	if (t_senoid < 33){
+	if (t_senoid_R < 33){
 		if (R_is_positive == 1){
-			changeRpositiveDutyCycle(senoid_pwm[t_senoid]);
+			changeRpositiveDutyCycle(senoid_pwm[t_senoid_R]);
 		}
 		if (R_is_positive == 0){
-			changeRnegativeDutyCycle(senoid_pwm[t_senoid]);
+			changeRnegativeDutyCycle(senoid_pwm[t_senoid_R]);
 		}
-		t_senoid++;
+		t_senoid_R++;
 	} else {
 		if (R_is_positive == 1){
 			R_is_positive = 0;
@@ -248,7 +260,51 @@ void updatePhaseR(){
 			R_is_positive = 1;
 			changeRnegativeDutyCycle(0);
 		}
-		t_senoid = 0;
+		t_senoid_R = 0;
+	}
+}
+
+void updatePhaseS(){
+	if (t_senoid_S < 33){
+		if (S_is_positive == 1){
+			changeSpositiveDutyCycle(senoid_pwm[t_senoid_S]);
+		}
+		if (S_is_positive == 0){
+			changeSnegativeDutyCycle(senoid_pwm[t_senoid_S]);
+		}
+		t_senoid_S++;
+	} else {
+		if (S_is_positive == 1){
+			S_is_positive = 0;
+			changeSpositiveDutyCycle(0);
+		}
+		else{
+			S_is_positive = 1;
+			changeSnegativeDutyCycle(0);
+		}
+		t_senoid_S = 0;
+	}
+}
+
+void updatePhaseT(){
+	if (t_senoid_T < 33){
+		if (T_is_positive == 1){
+			changeTpositiveDutyCycle(senoid_pwm[t_senoid_T]);
+		}
+		if (T_is_positive == 0){
+			changeTnegativeDutyCycle(senoid_pwm[t_senoid_T]);
+		}
+		t_senoid_T++;
+	} else {
+		if (T_is_positive == 1){
+			T_is_positive = 0;
+			changeTpositiveDutyCycle(0);
+		}
+		else{
+			T_is_positive = 1;
+			changeTnegativeDutyCycle(0);
+		}
+		t_senoid_T = 0;
 	}
 }
 
