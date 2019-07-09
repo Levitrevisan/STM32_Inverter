@@ -202,8 +202,8 @@ void InitializeTimer4IT(){
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	// Configure TimeBase structure
-	TIM_TimeBaseStructure.TIM_Prescaler	= 1; // considering 72MHz, 1ms
-	TIM_TimeBaseStructure.TIM_Period = 8999; // each 1ms
+	TIM_TimeBaseStructure.TIM_Prescaler	= 0; // considering 72MHz, 1ms
+	TIM_TimeBaseStructure.TIM_Period = 19999; // each 277,777777778 us
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 	
@@ -334,5 +334,3 @@ void toggle_led_PC13(){
 		}
 
 }
-
-
