@@ -15,7 +15,7 @@ Generate 3 phase signal through SPWM with 120 degrees of phase diffence. The fre
 *  [OK] Be able to generate 3 SPWM waves with 120 between them
 *  [--] Guarantee that SPWM generated have 120 degrees between them
 *  [--] Control SPWM Amplitude
-*  [--] Implement GPIO input interruption
+*  [OK] Implement GPIO input interruption
 ...
 *  [] Write all steps
 
