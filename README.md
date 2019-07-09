@@ -22,3 +22,5 @@ Generate 3 phase signal through SPWM with 120 degrees of phase diffence. The fre
 ## Reference
 
 *  [] Learn how to cite references here.
+
+## How to use MatLab script to generate SPWM values
