@@ -1,6 +1,7 @@
 --cpu Cortex-M3
 ".\objects\main.o"
 ".\objects\misc.o"
+".\objects\stm32f10x_exti.o"
 ".\objects\stm32f10x_gpio.o"
 ".\objects\stm32f10x_rcc.o"
 ".\objects\stm32f10x_tim.o"

@@ -1,43 +1,44 @@
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
+#include "stm32f10x_exti.h"
+#include "stm32f10x_conf.h"
+#include "stm32f10x_tim.h"
 
 #define PWM_TIMERS_PRESCALER 0	
 #define PWM_TIMERS_PERIOD 3550
 #define PWM_TIMERS_INIT_PULSE 500
+#define NUMBER_OF_POINTS_IN_ONE_CYCLE 60
 
 // Senoid Pattern generated in MatLab Script on subfolder
 
-int senoid_pwm[34] = {0 ,337 ,672 ,1000 ,1319 ,1627 ,1919 ,2194 ,2450 ,2683 ,2892 ,3074 ,3229 ,3355 ,3450 ,3514 ,3546 ,3546 ,3514 ,3450 ,3355 ,3229 ,3074 ,2892 ,2683 ,2450 ,2194 ,1919 ,1627 ,1319 ,1000 ,672 ,337};
+int senoid_pwm[NUMBER_OF_POINTS_IN_ONE_CYCLE] = {1775 ,1961 ,2144 ,2324 ,2497 ,2663 ,2818 ,2963 ,3094 ,3211 ,3312 ,3397 ,3463 ,3511 ,3540 ,3550 ,3540 ,3511 ,3463 ,3397 ,3312 ,3211 ,3094 ,2963 ,2818 ,2663 ,2497 ,2324 ,2144 ,1961 ,1775 ,1589 ,1406 ,1226 ,1053 ,888 ,732 ,587 ,456 ,339 ,238 ,153 ,87 ,39 ,10 ,0 ,10 ,39 ,87 ,153 ,238 ,339 ,456 ,587 ,732 ,887 ,1053 ,1226 ,1406 ,1589};
 
 // State Control Variables
 
-char R_is_positive = 1;
-char S_is_positive = 1;
-char T_is_positive = 1;
-
 int t_senoid_R = 0;
-int t_senoid_S = 34/3;
-int t_senoid_T = 34*2/3;
+int t_senoid_S = NUMBER_OF_POINTS_IN_ONE_CYCLE/3;
+int t_senoid_T = NUMBER_OF_POINTS_IN_ONE_CYCLE*2/3;
 
 // Functions Prototypes										
 
 void delay(unsigned int nCount);
-void InitializeTimer2();
-void InitializeTimer3();
-void InitializeTimer4IT();
-void InitializePWMChannels();
-void InitializePWMGPIO();
-void InitializeLEDGPIO();
-void toggle_led_PC13();
+void InitializeTimer2(void);
+void InitializeTimer3(void);
+void InitializeTimer4IT(void);
+void InitializeGPIOInterruptionOnPB6(void);
+void InitializePWMChannels(void);
+void InitializePWMGPIO(void);
+void InitializeLEDGPIO(void);
+void toggle_led_PC13(void);
 void changeRpositiveDutyCycle(int dutyCycle);
 void changeRnegativeDutyCycle(int dutyCycle);
 void changeSpositiveDutyCycle(int dutyCycle);
 void changeSnegativeDutyCycle(int dutyCycle);
 void changeTpositiveDutyCycle(int dutyCycle);
 void changeTnegativeDutyCycle(int dutyCycle);
-void updatePhaseR();
-void updatePhaseS();
-void updatePhaseT();
+void updatePhaseR(void);
+void updatePhaseS(void);
+void updatePhaseT(void);
 
 void setup(){
 	InitializeLEDGPIO();
@@ -46,19 +47,13 @@ void setup(){
 	InitializeTimer4IT();
 	InitializePWMChannels();
 	InitializePWMGPIO();
+	InitializeGPIOInterruptionOnPB6();
 }
 
 
 int main(){
 	
 	setup();
-	
-	changeRpositiveDutyCycle(200);
-	changeRnegativeDutyCycle(20);
-	changeSpositiveDutyCycle(1024);
-	changeSnegativeDutyCycle(3550);
-	changeTpositiveDutyCycle(1024);
-	changeTnegativeDutyCycle(4095);	
 	
 	while(1){
 
@@ -73,12 +68,14 @@ void InitializeLEDGPIO(){
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_StructInit(&GPIO_InitStructure);
+	//GPIO_StructInit(&GPIO_InitStructure);
 	
 	GPIO_InitStructure.GPIO_Pin	= GPIO_Pin_13; //Analog voltages to be measured are connected to pins 1 and 2 of port A, 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_Out_PP; //Analog input mode for ADC
+	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_Out_PP; //Output push-pull mode 
 	GPIO_Init(GPIOC, &GPIO_InitStructure); // calls the function to actually configure the port A.
+	GPIO_SetBits(GPIOC, GPIO_Pin_13);
+	
 }
 
 void InitializePWMGPIO(){
@@ -140,18 +137,22 @@ void InitializePWMChannels(){
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 	TIM_OCStructInit(&TIM_OCInitStructure);
 	
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	// Configuration for the positive parte (non-denied PWM channles)
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_Pulse = PWM_TIMERS_INIT_PULSE;
 	
 	//TIM_OCx < X is the PWM channel number
-	TIM_OC1Init(TIM2, &TIM_OCInitStructure); //PA0
-	TIM_OC2Init(TIM2, &TIM_OCInitStructure); //PA1
-	TIM_OC3Init(TIM2, &TIM_OCInitStructure); //PA2
-	TIM_OC4Init(TIM2, &TIM_OCInitStructure); //PA3
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure); //PA6
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure); //PA7
-
+	TIM_OC1Init(TIM2, &TIM_OCInitStructure); //PA0 - R positive
+	TIM_OC3Init(TIM2, &TIM_OCInitStructure); //PA2 - S positive
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure); //PA6 - T positive
+	
+	// Configuration for the negative parte (denied PWM channles)
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	
+	TIM_OC2Init(TIM2, &TIM_OCInitStructure); //PA1 - R negative
+	TIM_OC4Init(TIM2, &TIM_OCInitStructure); //PA3 - S negative
+	TIM_OC2Init(TIM3, &TIM_OCInitStructure); //PA7 - T negative
 }
 
 void delay(unsigned int nCount){
@@ -162,46 +163,27 @@ void delay(unsigned int nCount){
 }
 
 void changeRpositiveDutyCycle(int dutyCycle){
-	
-//	TIM_OCInitTypeDef TIM_OCInitStructure;
-//	TIM_OCStructInit(&TIM_OCInitStructure);
-//	
-//	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-//	TIM_OCInitStructure.TIM_Pulse = dutyCycle;
-//	
-//	TIM_OC1Init(TIM2, &TIM_OCInitStructure); //PA0
-	TIM2->CCR1 = dutyCycle; 
-	
+	TIM2->CCR1 = dutyCycle;
 }
 
 void changeRnegativeDutyCycle(int dutyCycle){
-	
-//	TIM_OCInitTypeDef TIM_OCInitStructure;
-//	TIM_OCStructInit(&TIM_OCInitStructure);
-//	
-//	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-//	TIM_OCInitStructure.TIM_Pulse = dutyCycle;
-//	
-//	TIM_OC2Init(TIM2, &TIM_OCInitStructure); //PA1
-	TIM2->CCR2 = dutyCycle; 
+	TIM2->CCR2 = dutyCycle;
 }
 
 void changeSpositiveDutyCycle(int dutyCycle){
-TIM2->CCR3 = dutyCycle; //0 .. 8191
+	TIM2->CCR3 = dutyCycle;
 }
 
 void changeSnegativeDutyCycle(int dutyCycle){
-TIM2->CCR4 = dutyCycle; //0 .. 8191
+	TIM2->CCR4 = dutyCycle;
 }
 
 void changeTpositiveDutyCycle(int dutyCycle){
-TIM3->CCR1 = dutyCycle; //0 .. 8191
+	TIM3->CCR1 = dutyCycle;
 }
 
 void changeTnegativeDutyCycle(int dutyCycle){
-TIM3->CCR2 = dutyCycle; //0 .. 8191
+	TIM3->CCR2 = dutyCycle;
 }
 void InitializeTimer4IT(){
 	
@@ -209,7 +191,7 @@ void InitializeTimer4IT(){
 	NVIC_InitTypeDef NVIC_InitStructure;
 	// No StructInit call in API
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -231,82 +213,117 @@ void InitializeTimer4IT(){
 	
 }
 
-void TIM4_IRQHandler(void){
-	//update phases SPWMs
-	updatePhaseR();
-	updatePhaseS();
-	updatePhaseT();
-	//"clear interruption flag"
-	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
+void InitializeGPIOInterruptionOnPB6(){
+	// acording to https://scienceprog.com/interrupt-based-button-read-on-stm32f103zet6-board/
+	// Interruption pin = PB1
+	// Ext. Interruption Line = 0
+
+	/* Enable clock for GPIOB */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	
+	GPIO_InitTypeDef GPIO_InitStruct;
+	EXTI_InitTypeDef EXTI_InitStruct;
+	
+	/* Set pin 6 as input Pull Down*/
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	// Connect PB6 to External Interrupt Event Controller line 0
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource1);
+	
+	
+	//EXTI_StructInit(&EXTI_InitStruct);
+	// PD1 is connected to EXTI_Line1 */
+	EXTI_InitStruct.EXTI_Line = EXTI_Line1;
+	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStruct);
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, DISABLE);
+	
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_Init(&NVIC_InitStructure);
+	//select NVIC channel to configure
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+  //set priority to lowest
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+  //set subpriority to lowest
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
+  //enable IRQ channel
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  //update NVIC registers
+  NVIC_Init(&NVIC_InitStructure);
+	
+	
+	
+	//NVIC_EnableIRQ(EXTI0_IRQn);
+	
 	
 	
 }
 
+//EXTIn_IRQHandler - where n is the line which is also the pin
+void EXTI1_IRQHandler(void){
+	//Check if EXTI_Line0 is asserted
+  if(EXTI_GetITStatus(EXTI_Line1) != RESET){
+		toggle_led_PC13();
+		
+  }
+	
+  //we need to clear line pending bit manually
+  EXTI_ClearITPendingBit(EXTI_Line1);
+}
+
+void TIM4_IRQHandler(void){
+	// Update phases SPWMs
+	updatePhaseR();
+	updatePhaseS();
+	updatePhaseT();
+	// Update Interruption bit state
+	TIM_ClearITPendingBit(TIM4 ,TIM_IT_Update);
+}
+
 void updatePhaseR(){
-	if (t_senoid_R < 33){
-		if (R_is_positive == 1){
-			changeRpositiveDutyCycle(senoid_pwm[t_senoid_R]);
-		}
-		if (R_is_positive == 0){
-			changeRnegativeDutyCycle(senoid_pwm[t_senoid_R]);
-		}
+	if(t_senoid_R<60){
+		changeRpositiveDutyCycle(senoid_pwm[t_senoid_R]);
+		changeRnegativeDutyCycle(senoid_pwm[t_senoid_R]);
 		t_senoid_R++;
 	} else {
-		if (R_is_positive == 1){
-			R_is_positive = 0;
-			changeRpositiveDutyCycle(0);
-		}
-		else{
-			R_is_positive = 1;
-			changeRnegativeDutyCycle(0);
-		}
 		t_senoid_R = 0;
+		changeRpositiveDutyCycle(senoid_pwm[t_senoid_R]);
+		changeRnegativeDutyCycle(senoid_pwm[t_senoid_R]);
 	}
 }
 
 void updatePhaseS(){
-	if (t_senoid_S < 33){
-		if (S_is_positive == 1){
-			changeSpositiveDutyCycle(senoid_pwm[t_senoid_S]);
-		}
-		if (S_is_positive == 0){
-			changeSnegativeDutyCycle(senoid_pwm[t_senoid_S]);
-		}
+	if(t_senoid_S<60){
+		changeSpositiveDutyCycle(senoid_pwm[t_senoid_S]);
+		changeSnegativeDutyCycle(senoid_pwm[t_senoid_S]);
 		t_senoid_S++;
 	} else {
-		if (S_is_positive == 1){
-			S_is_positive = 0;
-			changeSpositiveDutyCycle(0);
-		}
-		else{
-			S_is_positive = 1;
-			changeSnegativeDutyCycle(0);
-		}
 		t_senoid_S = 0;
+		changeSpositiveDutyCycle(senoid_pwm[t_senoid_S]);
+		changeSnegativeDutyCycle(senoid_pwm[t_senoid_S]);
 	}
 }
 
 void updatePhaseT(){
-	if (t_senoid_T < 33){
-		if (T_is_positive == 1){
-			changeTpositiveDutyCycle(senoid_pwm[t_senoid_T]);
-		}
-		if (T_is_positive == 0){
-			changeTnegativeDutyCycle(senoid_pwm[t_senoid_T]);
-		}
+	if(t_senoid_T<60){
+		changeTpositiveDutyCycle(senoid_pwm[t_senoid_T]);
+		changeTnegativeDutyCycle(senoid_pwm[t_senoid_T]);
 		t_senoid_T++;
 	} else {
-		if (T_is_positive == 1){
-			T_is_positive = 0;
-			changeTpositiveDutyCycle(0);
-		}
-		else{
-			T_is_positive = 1;
-			changeTnegativeDutyCycle(0);
-		}
 		t_senoid_T = 0;
+		changeTpositiveDutyCycle(senoid_pwm[t_senoid_T]);
+		changeTnegativeDutyCycle(senoid_pwm[t_senoid_T]);
 	}
 }
+
 
 void toggle_led_PC13(){
 	//toggle LED on pin PC13
