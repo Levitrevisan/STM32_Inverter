@@ -14,10 +14,10 @@ Generate 3 phase signal through SPWM with 120 degrees of phase diffence. The fre
 *  [OK] Guarantee that interruption have the timer and counter well adjusted to required time.
 *  [OK] Be able to generate 3 SPWM waves with 120 between them
 *  [--] Guarantee that SPWM generated have 120 degrees between them
-*  [--] Control SPWM Amplitude
+*  [OK] Control SPWM Amplitude
 *  [OK] Implement GPIO input interruption
-...
-*  [] Write all steps
+*  [--] Read Zero Cross signal
+*  [--] Control phase based on Zero Cross signal
 
 ## Reference
 
