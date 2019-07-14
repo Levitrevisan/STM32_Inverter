@@ -4,6 +4,16 @@
 #include "stm32f10x_conf.h"
 #include "stm32f10x_tim.h"
 
+/*
+Connections map:
+Interface Buttons:
+PB6 - "Phase -" button
+PB7 - "Phase +" button
+PB8 - "Amplitude +" button
+PB9 - "Amplitude -" button
+*/
+
+
 #define PWM_TIMERS_PRESCALER 0	
 #define PWM_TIMERS_PERIOD 3550
 #define PWM_TIMERS_INIT_PULSE 500
@@ -18,10 +28,12 @@ int senoid_pwm[NUMBER_OF_POINTS_IN_ONE_CYCLE] = {1775 ,1961 ,2144 ,2324 ,2497 ,2
 int t_senoid_R = 0;
 int t_senoid_S = NUMBER_OF_POINTS_IN_ONE_CYCLE/3;
 int t_senoid_T = NUMBER_OF_POINTS_IN_ONE_CYCLE*2/3;
+	
+float amplitudeFactor = 0.8;
 
 // Functions Prototypes										
 
-void delay(unsigned int nCount);
+void debounceDelay(unsigned int nCount);
 void InitializeTimer2(void);
 void InitializeTimer3(void);
 void InitializeTimer4IT(void);
@@ -29,6 +41,7 @@ void InitializeGPIOInterruptionOnPB6(void);
 void InitializePWMChannels(void);
 void InitializePWMGPIO(void);
 void InitializeLEDGPIO(void);
+void InitializeButtonsGPIO(void);
 void toggle_led_PC13(void);
 void changeRpositiveDutyCycle(int dutyCycle);
 void changeRnegativeDutyCycle(int dutyCycle);
@@ -39,6 +52,7 @@ void changeTnegativeDutyCycle(int dutyCycle);
 void updatePhaseR(void);
 void updatePhaseS(void);
 void updatePhaseT(void);
+void buttonPressDetection(void);
 
 void setup(){
 	InitializeLEDGPIO();
@@ -56,11 +70,50 @@ int main(){
 	setup();
 	
 	while(1){
-
+		
+		buttonPressDetection();
+		
 	}
 	
 
 return 0;
+}
+
+void buttonPressDetection(){
+		
+	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
+		debounceDelay(100);	
+		//detect 2 buttons long press
+		
+		//detect signle buttons press
+		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6)){
+			/*Phase -*/
+					toggle_led_PC13();
+		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)){
+			/*Phase +*/
+					toggle_led_PC13();
+		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
+			/*Amplitude -*/
+				
+			//avoid negative amplitudes
+				if (!(amplitudeFactor <= 0)){
+					amplitudeFactor = amplitudeFactor - 0.05;
+				}
+				toggle_led_PC13();
+		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
+			/*Amplitude +*/
+			
+			// avoid sinewave distortions
+			if (!(amplitudeFactor >= 1)){
+					amplitudeFactor = amplitudeFactor + 0.05;
+					toggle_led_PC13();
+			}
+		}
+		
+		// avoid double press
+		debounceDelay(200);	
+		}
+
 }
 
 void InitializeLEDGPIO(){
@@ -75,6 +128,26 @@ void InitializeLEDGPIO(){
 	GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_Out_PP; //Output push-pull mode 
 	GPIO_Init(GPIOC, &GPIO_InitStructure); // calls the function to actually configure the port A.
 	GPIO_SetBits(GPIOC, GPIO_Pin_13);
+	
+}
+
+void InitializeButtonsGPIO(){
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_StructInit(&GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;					//PB6
+	GPIO_Init(GPIOB , &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;					//PB7
+	GPIO_Init(GPIOA , &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;					//PB8
+	GPIO_Init(GPIOA , &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;					//PB9
+	GPIO_Init(GPIOA , &GPIO_InitStructure);
 	
 }
 
@@ -155,7 +228,7 @@ void InitializePWMChannels(){
 	TIM_OC2Init(TIM3, &TIM_OCInitStructure); //PA7 - T negative
 }
 
-void delay(unsigned int nCount){
+void debounceDelay(unsigned int nCount){
 		unsigned int i, j;
  
 		for (i = 0; i < nCount; i++)
@@ -163,27 +236,27 @@ void delay(unsigned int nCount){
 }
 
 void changeRpositiveDutyCycle(int dutyCycle){
-	TIM2->CCR1 = dutyCycle;
+	TIM2->CCR1 = dutyCycle*amplitudeFactor;
 }
 
 void changeRnegativeDutyCycle(int dutyCycle){
-	TIM2->CCR2 = dutyCycle;
+	TIM2->CCR2 = dutyCycle*amplitudeFactor;
 }
 
 void changeSpositiveDutyCycle(int dutyCycle){
-	TIM2->CCR3 = dutyCycle;
+	TIM2->CCR3 = dutyCycle*amplitudeFactor;
 }
 
 void changeSnegativeDutyCycle(int dutyCycle){
-	TIM2->CCR4 = dutyCycle;
+	TIM2->CCR4 = dutyCycle*amplitudeFactor;
 }
 
 void changeTpositiveDutyCycle(int dutyCycle){
-	TIM3->CCR1 = dutyCycle;
+	TIM3->CCR1 = dutyCycle*amplitudeFactor;
 }
 
 void changeTnegativeDutyCycle(int dutyCycle){
-	TIM3->CCR2 = dutyCycle;
+	TIM3->CCR2 = dutyCycle*amplitudeFactor;
 }
 void InitializeTimer4IT(){
 	
