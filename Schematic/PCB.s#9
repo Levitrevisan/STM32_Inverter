@@ -25552,7 +25552,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="C2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CPOL-US" device="E5-4" package3d_urn="urn:adsk.eagle:package:6240523/1" value="0.1u"/>
 <part name="C1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CPOL-US" device="E5-4" package3d_urn="urn:adsk.eagle:package:6240523/1" value="1u"/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="R15" library="pot" deviceset="TRIM_EU-" device="RJ9W"/>
+<part name="R15" library="pot" deviceset="TRIM_EU-" device="RJ9W" value="200"/>
 <part name="JP1" library="jumper" library_urn="urn:adsk.eagle:library:252" deviceset="JP1E" device="" package3d_urn="urn:adsk.eagle:package:15455/1"/>
 <part name="JP2" library="jumper" library_urn="urn:adsk.eagle:library:252" deviceset="JP1E" device="" package3d_urn="urn:adsk.eagle:package:15455/1"/>
 <part name="JP3" library="jumper" library_urn="urn:adsk.eagle:library:252" deviceset="JP1E" device="" package3d_urn="urn:adsk.eagle:package:15455/1"/>
@@ -25563,12 +25563,12 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="C3" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CPOL-US" device="E5-4" package3d_urn="urn:adsk.eagle:package:6240523/1" value="1n"/>
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="X1" library="con-wago-500" library_urn="urn:adsk.eagle:library:195" deviceset="W237-103" device="" package3d_urn="urn:adsk.eagle:package:10691/1"/>
-<part name="C4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2"/>
-<part name="C5" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2"/>
-<part name="C6" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2"/>
-<part name="C7" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1"/>
-<part name="C8" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1"/>
-<part name="C9" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1"/>
+<part name="C4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2" value="2.2uF"/>
+<part name="C5" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2" value="2.2uF"/>
+<part name="C6" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="CPOL-EU" device="E3.5-8" package3d_urn="urn:adsk.eagle:package:23360/2" value="2.2uF"/>
+<part name="C7" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1" value="0.1mF"/>
+<part name="C8" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1" value="0.1mF"/>
+<part name="C9" library="capacitor-wima" library_urn="urn:adsk.eagle:library:116" deviceset="C" device="5/5" package3d_urn="urn:adsk.eagle:package:5428/1" value="0.1mF"/>
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="X2" library="con-wago-500" library_urn="urn:adsk.eagle:library:195" deviceset="W237-102" device="" package3d_urn="urn:adsk.eagle:package:10688/1"/>
 <part name="GND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>

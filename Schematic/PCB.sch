@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -10493,6 +10493,30 @@ Source: http://www.osram.convergy.de/ ... LO_LS_LY L89K.pdf</description>
 <text x="1.73" y="-2.178" size="1.016" layer="21" font="vector">A</text>
 <text x="-2.938" y="-2.178" size="1.016" layer="21" font="vector">K</text>
 </package>
+<package name="DO41-10" urn="urn:adsk.eagle:footprint:6239679/1" library_version="2">
+<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
+diameter 2.54 mm, horizontal, grid 10.16 mm</description>
+<wire x1="2.032" y1="-1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="2.032" y1="-1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="-2.032" y1="1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="-2.032" y1="1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="0" x2="4.064" y2="0" width="0.762" layer="51"/>
+<wire x1="-5.08" y1="0" x2="-4.064" y2="0" width="0.762" layer="51"/>
+<wire x1="-0.635" y1="0" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="0.635" x2="1.016" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="-0.635" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="1.524" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="1.016" y2="0.635" width="0.1524" layer="21"/>
+<wire x1="0" y1="0.635" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="0" y2="-0.635" width="0.1524" layer="21"/>
+<pad name="A" x="5.08" y="0" drill="1.1176" diameter="1.9304"/>
+<pad name="C" x="-5.08" y="0" drill="1.1176" diameter="1.9304"/>
+<text x="-2.032" y="1.651" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-2.032" y="-2.794" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="-1.651" y1="-1.27" x2="-1.143" y2="1.27" layer="21"/>
+<rectangle x1="2.032" y1="-0.381" x2="3.937" y2="0.381" layer="21"/>
+<rectangle x1="-3.937" y1="-0.381" x2="-2.032" y2="0.381" layer="21"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="CT3216" urn="urn:adsk.eagle:package:6240404/1" type="box" library_version="2">
@@ -11669,6 +11693,13 @@ Source: http://www.osram.convergy.de/ ... LO_LS_LY L89K.pdf</description>
 <packageinstance name="SMLK34"/>
 </packageinstances>
 </package3d>
+<package3d name="DO41-10" urn="urn:adsk.eagle:package:6240344/1" type="box" library_version="2">
+<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
+diameter 2.54 mm, horizontal, grid 10.16 mm</description>
+<packageinstances>
+<packageinstance name="DO41-10"/>
+</packageinstances>
+</package3d>
 </packages3d>
 <symbols>
 <symbol name="CPOL-US" urn="urn:adsk.eagle:symbol:6239481/1" library_version="2">
@@ -11716,6 +11747,17 @@ Source: http://www.osram.convergy.de/ ... LO_LS_LY L89K.pdf</description>
 <vertex x="-2.921" y="-2.413"/>
 <vertex x="-2.413" y="-2.921"/>
 </polygon>
+</symbol>
+<symbol name="D" urn="urn:adsk.eagle:symbol:6239487/1" library_version="2">
+<wire x1="-1.27" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
+<wire x1="1.27" y1="0" x2="-1.27" y2="1.27" width="0.254" layer="94"/>
+<wire x1="1.27" y1="1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="1.27" x2="-1.27" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="1.27" y1="0" x2="1.27" y2="-1.27" width="0.254" layer="94"/>
+<text x="2.54" y="0.4826" size="1.778" layer="95">&gt;NAME</text>
+<text x="2.54" y="-2.3114" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="A" x="-2.54" y="0" visible="off" length="short" direction="pas"/>
+<pin name="C" x="2.54" y="0" visible="off" length="short" direction="pas" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -13774,6 +13816,29 @@ Source: http://www.osram.convergy.de/</description>
 </connects>
 <package3dinstances>
 <package3dinstance package3d_urn="urn:adsk.eagle:package:6240838/1"/>
+</package3dinstances>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="1N4004" urn="urn:adsk.eagle:component:6240986/1" prefix="D" library_version="2">
+<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
+General purpose 1N400x type rectifier
+&lt;p&gt;(With bigger pads)&lt;/p&gt;
+&lt;p&gt;http://www.ladyada.net/library/pcb/eaglelibrary.html&lt;p&gt;</description>
+<gates>
+<gate name="1" symbol="D" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="DO41-10">
+<connects>
+<connect gate="1" pin="A" pad="A"/>
+<connect gate="1" pin="C" pad="C"/>
+</connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:6240344/1"/>
 </package3dinstances>
 <technologies>
 <technology name=""/>
@@ -27261,6 +27326,7 @@ CAP-08070</description>
 <part name="C13" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="1000UF" device="-RADIAL-5MM-35V-20%-KIT" package3d_urn="urn:adsk.eagle:package:37421/1" value="220n - 400V"/>
 <part name="GND10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND11" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="D1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="1N4004" device="" package3d_urn="urn:adsk.eagle:package:6240344/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -27513,9 +27579,9 @@ CAP-08070</description>
 <attribute name="NAME" x="295.75801875" y="62.555115625" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="300.55861875" y="62.555115625" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R21" gate="G$1" x="305.565115625" y="190.61338125" smashed="yes">
-<attribute name="NAME" x="301.755115625" y="192.11198125" size="1.778" layer="95"/>
-<attribute name="VALUE" x="301.755115625" y="187.31138125" size="1.778" layer="96"/>
+<instance part="R21" gate="G$1" x="295.405115625" y="200.77338125" smashed="yes">
+<attribute name="NAME" x="291.595115625" y="202.27198125" size="1.778" layer="95"/>
+<attribute name="VALUE" x="291.595115625" y="197.47138125" size="1.778" layer="96"/>
 </instance>
 <instance part="R22" gate="G$1" x="337.38661875" y="201.565115625" smashed="yes" rot="R90">
 <attribute name="NAME" x="335.88801875" y="197.755115625" size="1.778" layer="95" rot="R90"/>
@@ -27591,6 +27657,10 @@ CAP-08070</description>
 </instance>
 <instance part="GND11" gate="1" x="265.01" y="89.25" smashed="yes">
 <attribute name="VALUE" x="262.47" y="86.71" size="1.778" layer="96"/>
+</instance>
+<instance part="D1" gate="1" x="304.8" y="193.04" smashed="yes" rot="R90">
+<attribute name="NAME" x="304.3174" y="195.58" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="307.1114" y="195.58" size="1.778" layer="96" rot="R90"/>
 </instance>
 </instances>
 <busses>
@@ -28477,9 +28547,9 @@ CAP-08070</description>
 <net name="LINE_PHASE" class="0">
 <segment>
 <pinref part="R21" gate="G$1" pin="1"/>
-<wire x1="300.485115625" y1="190.61338125" x2="296.98" y2="190.61338125" width="0.1524" layer="91"/>
-<wire x1="296.98" y1="190.61338125" x2="296.98" y2="190.6" width="0.1524" layer="91"/>
-<label x="296.96" y="190.59" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="290.325115625" y1="200.77338125" x2="286.82" y2="200.77338125" width="0.1524" layer="91"/>
+<wire x1="286.82" y1="200.77338125" x2="286.82" y2="200.76" width="0.1524" layer="91"/>
+<label x="286.8" y="200.75" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <wire x1="322.85" y1="3.75" x2="316.19" y2="3.75" width="0.1524" layer="91"/>
@@ -28489,21 +28559,16 @@ CAP-08070</description>
 <wire x1="322.85" y1="3.75" x2="322.85" y2="3.72" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="R21" gate="G$1" pin="2"/>
-<wire x1="310.645115625" y1="190.61338125" x2="310.645115625" y2="190.62" width="0.1524" layer="91"/>
-<wire x1="310.645115625" y1="190.62" x2="313.84" y2="190.62" width="0.1524" layer="91"/>
-<pinref part="OK7" gate="A" pin="A"/>
-<wire x1="313.84" y1="190.62" x2="313.84" y2="190.54" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="LINE_COM" class="0">
 <segment>
 <pinref part="OK7" gate="A" pin="C"/>
-<wire x1="313.84" y1="185.46" x2="297.06" y2="185.46" width="0.1524" layer="91"/>
-<wire x1="297.06" y1="185.46" x2="297.06" y2="185.42" width="0.1524" layer="91"/>
-<label x="297.04" y="185.47" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="313.84" y1="185.46" x2="286.9" y2="185.46" width="0.1524" layer="91"/>
+<wire x1="286.9" y1="185.46" x2="286.9" y2="185.42" width="0.1524" layer="91"/>
+<label x="286.88" y="185.47" size="1.778" layer="95" rot="R180" xref="yes"/>
+<pinref part="D1" gate="1" pin="A"/>
+<wire x1="313.84" y1="185.46" x2="304.8" y2="185.46" width="0.1524" layer="91"/>
+<wire x1="304.8" y1="185.46" x2="304.8" y2="190.5" width="0.1524" layer="91"/>
+<junction x="313.84" y="185.46"/>
 </segment>
 <segment>
 <wire x1="320.92" y1="8.83" x2="316.04" y2="8.83" width="0.1524" layer="91"/>
@@ -28620,6 +28685,20 @@ CAP-08070</description>
 <wire x1="-53.92" y1="83" x2="-49.5" y2="83" width="0.1524" layer="91"/>
 <wire x1="-49.5" y1="83" x2="-49.5" y2="79.48" width="0.1524" layer="91"/>
 <label x="-49.52" y="82.99" size="1.778" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$14" class="0">
+<segment>
+<pinref part="R21" gate="G$1" pin="2"/>
+<wire x1="300.485115625" y1="200.77338125" x2="309.88" y2="200.77338125" width="0.1524" layer="91"/>
+<wire x1="309.88" y1="200.77338125" x2="309.88" y2="190.5" width="0.1524" layer="91"/>
+<pinref part="OK7" gate="A" pin="A"/>
+<wire x1="309.88" y1="190.5" x2="313.84" y2="190.5" width="0.1524" layer="91"/>
+<wire x1="313.84" y1="190.5" x2="313.84" y2="190.54" width="0.1524" layer="91"/>
+<pinref part="D1" gate="1" pin="C"/>
+<wire x1="300.485115625" y1="200.77338125" x2="304.8" y2="200.77338125" width="0.1524" layer="91"/>
+<wire x1="304.8" y1="200.77338125" x2="304.8" y2="195.58" width="0.1524" layer="91"/>
+<junction x="300.485115625" y="200.77338125"/>
 </segment>
 </net>
 </nets>

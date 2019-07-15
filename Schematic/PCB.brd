@@ -1566,6 +1566,30 @@ grid 5.05 mm, diameter 4 mm</description>
 <text x="1.905" y="0.381" size="1.27" layer="25" ratio="10">&gt;NAME</text>
 <text x="1.905" y="-1.651" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 </package>
+<package name="DO41-10" urn="urn:adsk.eagle:footprint:6239679/1" library_version="2">
+<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
+diameter 2.54 mm, horizontal, grid 10.16 mm</description>
+<wire x1="2.032" y1="-1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="2.032" y1="-1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="-2.032" y1="1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="-2.032" y1="1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="0" x2="4.064" y2="0" width="0.762" layer="51"/>
+<wire x1="-5.08" y1="0" x2="-4.064" y2="0" width="0.762" layer="51"/>
+<wire x1="-0.635" y1="0" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="0.635" x2="1.016" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="1.016" y1="-0.635" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="1.524" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="1.016" y2="0.635" width="0.1524" layer="21"/>
+<wire x1="0" y1="0.635" x2="0" y2="0" width="0.1524" layer="21"/>
+<wire x1="0" y1="0" x2="0" y2="-0.635" width="0.1524" layer="21"/>
+<pad name="A" x="5.08" y="0" drill="1.1176" diameter="1.9304"/>
+<pad name="C" x="-5.08" y="0" drill="1.1176" diameter="1.9304"/>
+<text x="-2.032" y="1.651" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-2.032" y="-2.794" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="-1.651" y1="-1.27" x2="-1.143" y2="1.27" layer="21"/>
+<rectangle x1="2.032" y1="-0.381" x2="3.937" y2="0.381" layer="21"/>
+<rectangle x1="-3.937" y1="-0.381" x2="-2.032" y2="0.381" layer="21"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="E5-4" urn="urn:adsk.eagle:package:6240523/1" type="box" library_version="2">
@@ -1586,6 +1610,13 @@ grid 5.05 mm, diameter 4 mm</description>
 3 mm, round</description>
 <packageinstances>
 <packageinstance name="LED3MM"/>
+</packageinstances>
+</package3d>
+<package3d name="DO41-10" urn="urn:adsk.eagle:package:6240344/1" type="box" library_version="2">
+<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
+diameter 2.54 mm, horizontal, grid 10.16 mm</description>
+<packageinstances>
+<packageinstance name="DO41-10"/>
 </packageinstances>
 </package3d>
 </packages3d>
@@ -3607,6 +3638,10 @@ design rules under a new name.</description>
 <attribute name="PROD_ID" value="CAP-09538" x="87" y="24.75" size="1.778" layer="28" rot="MR0" display="off"/>
 <attribute name="VALUE" x="87" y="19.543" size="0.6096" layer="28" font="vector" ratio="20" rot="MR0" align="top-center"/>
 </element>
+<element name="D1" library="adafruit" library_urn="urn:adsk.eagle:library:420" package="DO41-10" package3d_urn="urn:adsk.eagle:package:6240344/1" value="1N4004" x="84" y="5.25" smashed="yes">
+<attribute name="NAME" x="81.968" y="6.901" size="1.27" layer="25" ratio="10"/>
+<attribute name="VALUE" x="81.968" y="2.456" size="1.27" layer="27" ratio="10"/>
+</element>
 </elements>
 <signals>
 <signal name="R_HIGH_PWM">
@@ -4336,17 +4371,15 @@ design rules under a new name.</description>
 <wire x1="94.73" y1="2.75" x2="94.23" y2="2.25" width="1.27" layer="1"/>
 <wire x1="94.23" y1="2.25" x2="88.83" y2="2.25" width="1.27" layer="1"/>
 </signal>
-<signal name="N$14">
-<contactref element="R21" pad="2"/>
-<contactref element="OK7" pad="1"/>
-<wire x1="78.67" y1="2.25" x2="78.65" y2="2.23" width="1.27" layer="1"/>
-<wire x1="78.65" y1="2.23" x2="74.81" y2="2.23" width="1.27" layer="1"/>
-</signal>
 <signal name="LINE_COM">
 <contactref element="OK7" pad="2"/>
 <contactref element="X3" pad="1"/>
 <wire x1="74.81" y1="4.77" x2="77.79" y2="7.75" width="1.27" layer="1"/>
-<wire x1="77.79" y1="7.75" x2="94.73" y2="7.75" width="1.27" layer="1"/>
+<wire x1="77.79" y1="7.75" x2="89.25" y2="7.75" width="1.27" layer="1"/>
+<contactref element="D1" pad="A"/>
+<wire x1="89.25" y1="7.75" x2="94.73" y2="7.75" width="1.27" layer="1"/>
+<wire x1="89.08" y1="5.25" x2="89.08" y2="7.58" width="1.27" layer="1"/>
+<wire x1="89.08" y1="7.58" x2="89.25" y2="7.75" width="0.1524" layer="1"/>
 </signal>
 <signal name="ZERO_CROSS_PULSE">
 <contactref element="U$1" pad="PB_1"/>
@@ -4445,6 +4478,17 @@ design rules under a new name.</description>
 <wire x1="5.5" y1="42" x2="3.9" y2="42" width="0.8128" layer="1"/>
 <wire x1="11" y1="26.83" x2="11" y2="36.5" width="0.8128" layer="1"/>
 <wire x1="3.9" y1="42" x2="3.81" y2="41.91" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$14">
+<contactref element="R21" pad="2"/>
+<contactref element="OK7" pad="1"/>
+<contactref element="D1" pad="C"/>
+<wire x1="78.67" y1="2.25" x2="78.5" y2="2.25" width="0.1524" layer="1"/>
+<wire x1="79" y1="2.25" x2="78.5" y2="2.25" width="1.27" layer="1"/>
+<wire x1="78.5" y1="2.25" x2="74.83" y2="2.25" width="1.27" layer="1"/>
+<wire x1="74.83" y1="2.25" x2="74.81" y2="2.23" width="0.1524" layer="1"/>
+<wire x1="78.92" y1="5.25" x2="79" y2="5.17" width="1.27" layer="1"/>
+<wire x1="79" y1="5.17" x2="79" y2="2.25" width="1.27" layer="1"/>
 </signal>
 </signals>
 <mfgpreviewcolors>
