@@ -25,11 +25,17 @@ int senoid_pwm[NUMBER_OF_POINTS_IN_ONE_CYCLE] = {1775 ,1961 ,2144 ,2324 ,2497 ,2
 
 // State Control Variables
 
+int t_senoid_R_init_value = 0;
+int t_senoid_S_init_value = NUMBER_OF_POINTS_IN_ONE_CYCLE/3;
+int t_senoid_T_init_value = NUMBER_OF_POINTS_IN_ONE_CYCLE*2/3;
+	
 int t_senoid_R = 0;
 int t_senoid_S = NUMBER_OF_POINTS_IN_ONE_CYCLE/3;
 int t_senoid_T = NUMBER_OF_POINTS_IN_ONE_CYCLE*2/3;
 	
 float amplitudeFactor = 0.8;
+	
+int isGridTie = 0;
 
 // Functions Prototypes										
 
@@ -52,16 +58,18 @@ void changeTnegativeDutyCycle(int dutyCycle);
 void updatePhaseR(void);
 void updatePhaseS(void);
 void updatePhaseT(void);
+void incrementSenoidPosition(void);
+void decrementSenoidPosition(void);
 void buttonPressDetection(void);
 
 void setup(){
 	InitializeLEDGPIO();
 	InitializeTimer2();
 	InitializeTimer3();
-	InitializeTimer4IT();
 	InitializePWMChannels();
 	InitializePWMGPIO();
 	InitializeGPIOInterruptionOnPB6();
+	InitializeTimer4IT();
 }
 
 
@@ -79,40 +87,57 @@ int main(){
 return 0;
 }
 
+void incrementSenoidPosition(){
+		if ((t_senoid_R < 60) & (t_senoid_S < 60) & (t_senoid_T < 60)){
+			t_senoid_R ++;
+			t_senoid_S ++;
+			t_senoid_T ++;
+		}
+}
+
+void decrementSenoidPosition(){
+	if ((t_senoid_R > 0) & (t_senoid_S > 0) & (t_senoid_T > 0)){
+		t_senoid_R --;
+		t_senoid_S --;
+		t_senoid_T --;
+	}
+}
+	
 void buttonPressDetection(){
-		
+				
 	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8) | GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
 		debounceDelay(100);	
 		//detect 2 buttons long press
-		
-		//detect signle buttons press
-		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6)){
+		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) & GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
+			toggle_led_PC13();
+			if (isGridTie == 1){
+				isGridTie = 0;
+			} else {
+				isGridTie = 1;
+			}
+		} else if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6)){
 			/*Phase -*/
-					toggle_led_PC13();
+			decrementSenoidPosition();
 		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)){
 			/*Phase +*/
-					toggle_led_PC13();
+			incrementSenoidPosition();
 		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
-			/*Amplitude -*/
-				
+			/*Amplitude -*/			
 			//avoid negative amplitudes
 				if (!(amplitudeFactor <= 0)){
 					amplitudeFactor = amplitudeFactor - 0.05;
 				}
-				toggle_led_PC13();
 		} else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
 			/*Amplitude +*/
-			
 			// avoid sinewave distortions
 			if (!(amplitudeFactor >= 1)){
-					amplitudeFactor = amplitudeFactor + 0.05;
-					toggle_led_PC13();
+				amplitudeFactor = amplitudeFactor + 0.05;
 			}
 		}
 		
 		// avoid double press
 		debounceDelay(200);	
-		}
+	}
 
 }
 
@@ -305,7 +330,7 @@ void InitializeGPIOInterruptionOnPB6(){
 
 	// Connect PB6 to External Interrupt Event Controller line 0
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  
+	
 	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource1);
 	
 	
@@ -323,14 +348,14 @@ void InitializeGPIOInterruptionOnPB6(){
 	NVIC_Init(&NVIC_InitStructure);
 	//select NVIC channel to configure
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
-  //set priority to lowest
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
-  //set subpriority to lowest
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
-  //enable IRQ channel
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  //update NVIC registers
-  NVIC_Init(&NVIC_InitStructure);
+	//set priority to lowest
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+	//set subpriority to lowest
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
+	//enable IRQ channel
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	//update NVIC registers
+	NVIC_Init(&NVIC_InitStructure);
 	
 	
 	
@@ -343,13 +368,13 @@ void InitializeGPIOInterruptionOnPB6(){
 //EXTIn_IRQHandler - where n is the line which is also the pin
 void EXTI1_IRQHandler(void){
 	//Check if EXTI_Line0 is asserted
-  if(EXTI_GetITStatus(EXTI_Line1) != RESET){
+	if(EXTI_GetITStatus(EXTI_Line1) != RESET){
 		toggle_led_PC13();
 		
-  }
+	}
 	
-  //we need to clear line pending bit manually
-  EXTI_ClearITPendingBit(EXTI_Line1);
+	//we need to clear line pending bit manually
+	EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
 void TIM4_IRQHandler(void){
